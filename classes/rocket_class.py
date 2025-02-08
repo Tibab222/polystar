@@ -3,14 +3,15 @@ import math
 from classes.planet_class import Planet
 
 class Rocket:
-    def __init__(self, name, speed):
+    def __init__(self, name, speed, departure_planet: Planet):
         self.name = name
         self.speed = speed
         self.distance = 0 # distance parcourue
         self.time = 0 # temps de vol effectué en secondes
         self.speed = 0 # vitesse actuelle en m/s
-        self.position = (0, 0) # position actuelle (x, y)
+        self.position = departure_planet.position_at_time(0) # position actuelle (x, y)
         self.steps = [] # historique des positions
+        self.steps.append(self.position)
         self.gas = 100 # carburant en %
         self.acceleration = 0
     
