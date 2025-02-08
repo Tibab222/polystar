@@ -14,8 +14,9 @@ def calcul_trajectoire():
 @app.route("/planets")
 def list_planets():
     """ returns data of planets """
-    planets = getPlanetData()
-    return planets
+    trajectory = calculate_trajectory("Earth", "Mars", 5000)
+    #return getPlanetData()
+    return trajectory
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8000)
