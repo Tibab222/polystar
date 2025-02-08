@@ -1,10 +1,15 @@
 from flask import Flask, jsonify
 from solarySystem import *
 
+import calculations
+
 app = Flask(__name__)
 
 @app.route('/')
 def home():
+    solarySystem = buildPlanets()
+    for planet in solarySystem:
+        print(planet)
     return jsonify({"message": "Bienvenue sur mon serveur Flask !"})
 
 @app.route('/calcul')
@@ -14,7 +19,7 @@ def calcul_trajectoire():
 @app.route("/planets")
 def list_planets():
     """ returns data of planets """
-    trajectory = calculate_trajectory("Earth", "Mars", 5000)
+    trajectory = calculatePath("Mercury", "Earth", 7000)
     #return getPlanetData()
     return trajectory
 

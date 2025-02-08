@@ -1,7 +1,8 @@
 import json
 import numpy as np
 import heapq  
-
+from calculations import *
+from classes.planet_class import *
 G = 6.67430e-11 
 
 def getPlanetData():
@@ -21,47 +22,65 @@ def getPlanetData():
                 })
         planets.sort(key=lambda x: x['distance_from_sun']) # we sort the planets 
         return {p['name']: p for p in planets}
+    
+def buildPlanets():
+    planets = getPlanetData()
+    planetsObjects = [
+        Planet(name, 
+            data["radius"], 
+            data["mass"], 
+            data["distance_from_sun"], 
+            data["gravity"], 
+            data["orbitalPeriod"])
+        for name, data in planets.items()
+    ]
+    return planetsObjects
 
-def slingshot_velocity(v_in, planet):
+def buildPlanet(planetName):
+    """ Construit un objet Planet à partir du nom de la planète """
+    planets = getPlanetData()
+    p = planets[planetName]
+    return Planet(p['name'], p['radius'], p['mass'], p['distance_from_sun'], p['gravity'], p['orbitalPeriod'])
+
+
+def slingshot_velocity(v_in, planet: Planet):
     """ Calcule la vitesse après un slingshot gravitationnel """
-    v_planet = planet['orbital_speed'] 
-    M = planet['mass']
-    r = planet['distance_from_sun']
+    v_planet = planet.averageSpeed
+    M = planet.mass
+    r = planet.distanceFromSun
 
     delta_v = np.sqrt(v_in**2 + 2 * G * M / r)  
     return delta_v + v_planet  # Ajoute la vitesse de la planète elle-même
 
 def calculatePath(departure, destination, initialSpeed):
     """ Trouve la meilleure trajectoire en minimisant la consommation de carburant """
-    planets = getPlanetData()
-
-    if departure not in planets or destination not in planets:
-        return {"error": "Planète inconnue"}
+    departurePlanet = buildPlanet(departure)
+    destinationPlanet = buildPlanet(destination)
+    planets = buildPlanets()
 
     queue = []
-    heapq.heappush(queue, (0, departure, initialSpeed, [departure]))  # (cost, current_planet, speed, path)
+    heapq.heappush(queue, (0, departurePlanet.name, initialSpeed, [departurePlanet.name]))  # (cost, current_planet_name, speed, path)
     
     visited = {}
 
     while queue:
-        cost, current, speed, path = heapq.heappop(queue)
+        cost, current_name, speed, path = heapq.heappop(queue)
 
-        if current == destination:
+        if current_name == destinationPlanet.name:
             return {"best_route": path, "fuel_efficiency": cost}
 
-        if current in visited and visited[current] <= cost:
+        if current_name in visited and visited[current_name] <= cost:
             continue 
 
-        visited[current] = cost
+        visited[current_name] = cost
 
-        for next_planet in planets.keys():
-            if next_planet in path:  
+        for nextPlanet in planets:
+            if nextPlanet.name in path:  # Évite les boucles
                 continue
 
-            new_speed = slingshot_velocity(speed, planets[next_planet])
-            new_cost = cost + (1 / new_speed) 
+            new_speed = slingshot_velocity(speed, nextPlanet)
+            new_cost = cost + (100 / new_speed)  # Facteur pour augmenter l'impact du coût
 
-            heapq.heappush(queue, (new_cost, next_planet, new_speed, path + [next_planet]))
+            heapq.heappush(queue, (new_cost, nextPlanet.name, new_speed, path + [nextPlanet.name]))
 
     return {"error": "Aucune trajectoire trouvée"}
-
