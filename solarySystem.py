@@ -1,5 +1,5 @@
 from flask import json
-from planet_class import Planet
+from classes.planet_class import Planet
 
 def getPlanetData() : 
     with open("solarySystemConsts.json") as f:
