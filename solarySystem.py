@@ -1,4 +1,5 @@
 from flask import json
+from planet_class import Planet
 
 def getPlanetData() : 
     with open("solarySystemConsts.json") as f:
@@ -14,3 +15,16 @@ def getPlanetData() :
                     'orbitalPeriod': body.get('sideralOrbit', 0), # in days
                 }
         return planets
+    
+def buildPlanets():
+    planets = getPlanetData()
+    planetsObjects = [
+        Planet(name, 
+               data["radius"], 
+               data["mass"], 
+               data["distance_from_sun"], 
+               data["gravity"], 
+               data["orbitalPeriod"])
+        for name, data in planets.items()
+    ]
+    return planetsObjects

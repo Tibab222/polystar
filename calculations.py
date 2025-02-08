@@ -21,4 +21,3 @@ def average_planet_speed(distanceFromSun, period_in_days):
     """
     return distanceFromSun * 2 * math.pi / (period_in_days * 24 * 3600)
 
-

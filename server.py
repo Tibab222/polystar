@@ -7,6 +7,9 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
+    solarySystem = buildPlanets()
+    for planet in solarySystem:
+        print(planet)
     return jsonify({"message": "Bienvenue sur mon serveur Flask !"})
 
 @app.route('/calcul')
