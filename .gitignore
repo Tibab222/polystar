@@ -1,0 +1,33 @@
+# 🔹 Ignorer l'environnement virtuel
+venv/
+*.venv/
+env/
+.venv/
+ENV/
+env.bak/
+
+# 🔹 Ignorer les fichiers de dépendances inutiles
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# 🔹 Ignorer les logs et fichiers temporaires
+*.log
+*.out
+*.tmp
+*.swp
+
+# 🔹 Ignorer les fichiers VS Code
+.vscode/
+*.code-workspace
+
+# 🔹 Ignorer les dépendances installées (si tu utilises Poetry ou Pipenv)
+Pipfile
+Pipfile.lock
+poetry.lock
+
+# 🔹 Ignorer les fichiers système (Mac et Windows)
+.DS_Store
+Thumbs.db
