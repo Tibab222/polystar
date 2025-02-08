@@ -10,6 +10,7 @@ def home():
     solarySystem = buildPlanets()
     for planet in solarySystem:
         print(planet)
+        print(planet.position_at_time(20))
     return jsonify({"message": "Bienvenue sur mon serveur Flask !"})
 
 @app.route('/calcul')

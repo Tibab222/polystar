@@ -6,6 +6,7 @@ def orbital_speed(orbital_radius, mass, GRAVITY):
     @param orbital_radius: rayon de l'orbite (m)
     @param mass: masse du corps massif (kg)
     @param GRAVITY: constante gravitationnelle (m^3 kg^-1 s^-2)
+    @return: vitesse orbitale de l'objet (m/s)
     """
     return math.sqrt(GRAVITY * mass / orbital_radius)
 
@@ -18,6 +19,7 @@ def average_planet_speed(distanceFromSun, period_in_days):
         Vitesse orbitale moyenne d'une planete autour du Soleil.
         @param distanceFromSun: distance moyenne de la planete au Soleil (km)
         @param period_in_days: periode orbitale de la planete pour faire un tour autour du soleil (jours)
+        @return: vitesse orbitale moyenne de la planete (m/s)
     """
     return distanceFromSun * 2 * math.pi / (period_in_days * 24 * 3600)
 
