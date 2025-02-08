@@ -1,7 +1,6 @@
 from flask import Flask, jsonify
 from solarySystem import *
-
-import calculations
+from trajectory import *
 
 app = Flask(__name__)
 
