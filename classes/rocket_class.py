@@ -49,3 +49,8 @@ class Rocket:
         x = self.x + self.vx * time + 0.5 * self.acceleration * math.cos(self.angle) * time**2
         y = self.y + self.vy * time + 0.5 * self.acceleration * math.sin(self.angle) * time**2
         return x, y
+    
+    def position_at_planet(self, planet: Planet):
+        """Retourne la position (x, y) de la fusée à l'arrivée à la planète"""
+        t_arrival = self.time_to_orbit(planet)
+        return self.position_at_time(t_arrival)
