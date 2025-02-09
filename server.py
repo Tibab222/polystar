@@ -3,6 +3,7 @@ from classes.rocket_class import Rocket
 from solarySystem import *
 from trajectory import *
 from classes.planet_class import *
+import math
 
 app = Flask(__name__)
 
@@ -13,30 +14,38 @@ def home():
 @app.route('/calcul/<origin>/<destination>')
 def calcul_trajectoire(origin, destination):
     planets = buildPlanets()
-    for planet in planets:
-        if planet.name == origin:
-            origin_planet = planet
-            break
+
+    origin_planet = next(p for p in planets if p.name == origin)
+
     rocket = Rocket("Fusée", 7900, origin_planet)
+    defaultRocket = Rocket("Fusée", 7900, origin_planet)  # Clone pour comparaison
+
     optPath = findOptimalPath(origin, destination)
     route = optPath["best_route"]
-    for planet in route:
-        for p in planets:
-            if p.name == planet:
-                planet = p
-                break
-        rocket.moveToPlanet(planet)
-        print(rocket)
-        steps = rocket.steps
-        returnSteps = []
-        for step in steps:
-            returnSteps.append({"angle": math.atan2(step[0], step[1]), "planet": step[2], "time": step[3]})
-    defaultRocket = Rocket("Fusée", 7900, origin_planet)
-    defaultDist, defaultTime = defaultRocket.moveToPlanet(destination) # on voit le deplacement par default et on le compare 
+
+    for planet_name in route:
+        planet = next(p for p in planets if p.name == planet_name)
+        rocket.move_to_planet(planet)
+
+    steps = []
+    for step in rocket.steps:
+        steps.append({
+            "planet": step["planet"],
+            "position": math.atan2(step["position"][1], step["position"][0]),
+            "speed": step["speed"],
+            "fuel": step["fuel"],
+            "time": step["time"]
+        })
+
+    defaultRocket.move_to_planet(next(p for p in planets if p.name == destination))
+
     return jsonify({
-                    "steps": returnSteps, 
-                    "defaultFly": {"defaultTime: ": defaultTime, "defaultFuelConsumption :": defaultRocket.gas}
-                    })
+        "optimalPath": optPath,
+        "steps": steps,
+        "defaultTime": defaultRocket.time,
+        "defaultFuelConsumption": defaultRocket.gas
+    })
+
 
 @app.route("/planets")
 def list_planets():

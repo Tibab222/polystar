@@ -1,92 +1,64 @@
 import math
-
 import numpy as np
-
-from classes.planet_class import Planet
+import datetime
+from astroquery.jplhorizons import Horizons
 
 class Rocket:
-    def __init__(self, name, speed, departure_planet: Planet):
+    def __init__(self, name, speed, departure_planet):
+        """Initialise la fusée"""
         self.name = name
-        self.speed = speed # vitesse actuelle en m/s
-        self.distance = 0 # distance parcourue
-        self.time = 0 # temps de vol effectué en secondes
-        self.position = departure_planet.position_at_time(0) # position actuelle (x, y)
-        self.last_planet = departure_planet
-        self.steps = [] # historique des positions
-        self.gas = 100 # carburant en %
-        self.acceleration = 0
-        self.direction = 0 # angle de la direction de la fusée
-    
-    def __str__(self):
-        return f"{self.name} vole à {self.speed} m/s"
-    
-    def moveToPosition(self, x, y, speed, planetName):
-        """"
-        Déplace la fusée à la position (x, y) à la vitesse speed.
-        Change la position de la fusée et met à jour les attributs
-        """
-        # Calcul de la distance à parcourir
-        distance = math.sqrt((x - self.position[0])**2 + (y - self.position[1])**2)
-        # Calcul du temps de vol
-        speedNorm = np.linalg.norm(speed)
-        time = distance / speedNorm * 10/1000000
-        # Mise à jour des attributs
-        self.distance += distance
-        self.time += time
-        self.speed = speed
-        self.position = (x, y)
-        self.direction = math.atan2(y - self.position[1], x - self.position[0])
-        newStep = (self.position[0], self.position[1], planetName, time)
-        self.steps.append(newStep)
-        return distance, time
-    
-    def moveToPlanet(self, planet: str):
-        """Déplace la fusée à la position de la planète"""
-        x, y = planet.position_at_time(0)
-        distance, time = self.moveToPosition(x, y, self.speed, planet.name)
-        new_speed = self.calculateFlyby(planet)
-        fuelConsumption = distance/10000 # -1% pour chaque 10km
-        self.speed = new_speed
-        self.gas -= fuelConsumption/new_speed # plus la vitesse est grande moins de gas consomé
-        return distance, time
-    
-    def calculateFlyby(self, planet: Planet):
-        """Calcule la nouvelle vitesse pour un slingshot gravitationnel"""
-        G = planet.gravity
-        impact_parameter = planet.radius * 1.5  # Paramètre d'impact arbitraire
-        v_relative_in = self.speed - planet.averageSpeed  # Vitesse relative avant l'approche
-        v_rel_norm = np.linalg.norm(v_relative_in)  # Norme de la vitesse relative
+        self.speed = np.array([speed, 0])  # (vx, vy)
+        self.position = np.array(departure_planet.position_at_time(0))
+        self.gas = 100  # Carburant (en %)
+        self.time = 0  # Temps total écoulé
+        self.steps = []  # Historique des déplacements
+        self.current_planet = departure_planet  # Dernière planète visitée
 
-        # Calcul de l'angle de déviation
+    def __str__(self):
+        return f"{self.name} est à {self.position} avec {self.gas}% de carburant"
+
+    def get_planet_position_at_arrival(self, planet, time_elapsed):
+        return np.array(planet.position_at_time(time_elapsed))
+
+    def calculate_slingshot(self, planet):
+        G = planet.gravity
+        impact_parameter = planet.radius * 1.5 
+        v_relative_in = self.speed - planet.averageSpeed  
+        v_rel_norm = np.linalg.norm(v_relative_in) 
+
         delta_theta = 2 * math.atan((G * planet.mass) / (impact_parameter * v_rel_norm ** 2))
 
-        # Rotation du vecteur de vitesse relative
         cos_theta = math.cos(delta_theta)
         sin_theta = math.sin(delta_theta)
         rotation_matrix = np.array([[cos_theta, -sin_theta], [sin_theta, cos_theta]])
         v_relative_out = np.dot(rotation_matrix, v_relative_in)
 
-        # Nouvelle vitesse de la fusée
-        return v_relative_out + planet.averageSpeed
-    
-    def time_to_orbit(self, planet: Planet):
-        """Calcule le temps nécessaire pour atteindre l'orbite de la planète"""
-        d_planet = planet.distanceFromSun - math.sqrt(self.position[0]**2 + self.position[1]**2)
+        return v_relative_out + planet.averageSpeed 
 
-        if self.acceleration == 0:
-            t_arrival = d_planet / self.speed
-        else:
-            t_arrival = (-self.speed + math.sqrt(self.speed**2 + 2 * self.acceleration * d_planet)) / self.acceleration
+    def move_to_planet(self, planet):
+        """Déplace la fusée vers la planète cible en ajustant vitesse et carburant"""
 
-        return t_arrival
-    
-    def position_at_time(self, time):
-        """Retourne la position (x, y) de la fusée à un instant donné"""
-        x = self.position[0] + self.speed * time + 0.5 * self.acceleration * math.cos(self.direction) * time**2
-        y = self.position[1] + self.speed * time + 0.5 * self.acceleration * math.sin(self.direction) * time**2
-        return x, y
-    
-    def position_at_planet(self, planet: Planet):
-        """Retourne la position (x, y) de la fusée à l'arrivée à la planète"""
-        t_arrival = self.time_to_orbit(planet)
-        return self.position_at_time(t_arrival)
+        distance = np.linalg.norm(self.position - planet.position_at_time(0))
+        time_to_reach = distance / np.linalg.norm(self.speed)  # en secondes
+        new_planet_position = self.get_planet_position_at_arrival(planet, time_to_reach)
+
+        new_speed = self.calculate_slingshot(planet)
+
+        fuel_consumption = (distance / 10000) / np.linalg.norm(new_speed) * 0.5 
+        fuel_consumption = max(fuel_consumption, 0.1)  
+
+        self.position = new_planet_position
+        self.speed = new_speed
+        self.gas -= fuel_consumption
+        self.time += time_to_reach
+        self.current_planet = planet
+
+        self.steps.append({
+            "planet": planet.name,
+            "position": self.position.tolist(),
+            "speed": self.speed.tolist(),
+            "fuel": self.gas,
+            "time": self.time
+        })
+
+        return distance, time_to_reach
