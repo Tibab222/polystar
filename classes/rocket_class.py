@@ -28,14 +28,15 @@ class Rocket:
         # Calcul de la distance à parcourir
         distance = math.sqrt((x - self.position[0])**2 + (y - self.position[1])**2)
         # Calcul du temps de vol
-        time = distance / speed
+        speedNorm = np.linalg.norm(speed)
+        time = distance / speedNorm * 10/1000000
         # Mise à jour des attributs
         self.distance += distance
         self.time += time
         self.speed = speed
         self.position = (x, y)
         self.direction = math.atan2(y - self.position[1], x - self.position[0])
-        newStep = (self.position[0], self.position[1], planetName)
+        newStep = (self.position[0], self.position[1], planetName, time)
         self.steps.append(newStep)
         return distance, time
     
