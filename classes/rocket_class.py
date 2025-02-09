@@ -12,6 +12,12 @@ class Rocket:
         self.gas = 100  # Carburant (en %)
         self.time = 0  # Temps total écoulé
         self.steps = []  # Historique des déplacements
+        self.steps.append({
+            "planet": departure_planet.name,
+            "position": self.position,
+            "fuel": self.gas,
+            "time": self.time
+        })
         self.current_planet = departure_planet  # Dernière planète visitée
 
     def __str__(self):
@@ -37,19 +43,19 @@ class Rocket:
 
     def move_to_planet(self, planet):
         """Déplace la fusée vers la planète cible en ajustant vitesse et carburant"""
+        self.gas -= 5
 
-        distance = np.linalg.norm(self.position - planet.position_at_time(0))
+        distance = np.linalg.norm(self.position - planet.position_at_time(self.time))
         time_to_reach = distance / np.linalg.norm(self.speed)  # en secondes
         new_planet_position = self.get_planet_position_at_arrival(planet, time_to_reach)
 
         new_speed = self.calculate_slingshot(planet)
 
-        fuel_consumption = (distance / 10000) / np.linalg.norm(new_speed) * 0.5 
-        fuel_consumption = max(fuel_consumption, 0.1)  
+        fuel_consumption = (distance / 10000) / np.linalg.norm(new_speed) * 0.2
 
         self.position = new_planet_position
         self.speed = new_speed
-        self.gas -= fuel_consumption
+        self.gas -= (fuel_consumption - 100) / 100
         self.time += time_to_reach
         self.current_planet = planet
 

@@ -18,29 +18,28 @@ def calcul_trajectoire(origin, destination):
     origin_planet = next(p for p in planets if p.name == origin)
 
     rocket = Rocket("Fusée", 7900, origin_planet)
-    defaultRocket = Rocket("Fusée", 7900, origin_planet)  # Clone pour comparaison
+    defaultRocket = Rocket("Rocket", 7900, origin_planet) 
 
     optPath = findOptimalPath(origin, destination)
     route = optPath["best_route"]
 
     for planet_name in route:
         planet = next(p for p in planets if p.name == planet_name)
-        rocket.move_to_planet(planet)
+        if planet_name != origin :
+            rocket.move_to_planet(planet)
 
     steps = []
     for step in rocket.steps:
         steps.append({
             "planet": step["planet"],
-            "position": math.atan2(step["position"][1], step["position"][0]),
-            "speed": step["speed"],
+            "angle": math.atan2(step["position"][1], step["position"][0]),
             "fuel": step["fuel"],
-            "time": step["time"]
+            "time": step["time"],
         })
 
     defaultRocket.move_to_planet(next(p for p in planets if p.name == destination))
 
     return jsonify({
-        "optimalPath": optPath,
         "steps": steps,
         "defaultTime": defaultRocket.time,
         "defaultFuelConsumption": defaultRocket.gas

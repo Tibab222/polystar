@@ -39,8 +39,8 @@ def buildPlanets():
 def getPlanetAngle(planetName):
     """ Récupère l'angle initial de la planète par rapport à l'axe x """
     pos = getPlanetPosition(planetName, datetime.datetime.now(datetime.timezone.utc))
-    angleXYZ = math.atan2(pos["z"], math.sqrt(pos["x"]**2 + pos["y"]**2))
-    return angleXYZ
+    angleXY = math.atan2(pos["y"], pos["x"])
+    return angleXY
 
 def buildPlanet(planetName):
     """ Construit un objet Planet à partir du nom de la planète """

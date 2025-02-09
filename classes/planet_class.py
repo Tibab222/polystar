@@ -3,7 +3,7 @@ import math
 import numpy as np
 
 class Planet:
-    def __init__(self, name, radius, mass, distanceFromSun, gravity, orbitalPeriod, initial_angle=0):
+    def __init__(self, name, radius, mass, distanceFromSun, gravity, orbitalPeriod, initial_angle):
         self.name = name
         self.radius = radius
         self.mass = mass
