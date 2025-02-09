@@ -7,7 +7,7 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class TrajectoryService {
-  private apiUrl = 'http://127.0.0.1:8000/calcul';
+  private apiUrl = 'http://ec2-3-98-57-130.ca-central-1.compute.amazonaws.com:8000/calcul';
   private trajectoryData = new BehaviorSubject<any>(null); 
 
   constructor(private http: HttpClient) {}
