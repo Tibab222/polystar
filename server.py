@@ -31,12 +31,18 @@ def calcul_trajectoire(origin, destination):
         returnSteps = []
         for step in steps:
             returnSteps.append({"angle": math.atan2(step[0], step[1]), "planet": step[2], "time": step[3]})
-    return jsonify({"steps": returnSteps})
+    defaultRocket = Rocket("Fusée", 7900, origin_planet)
+    defaultDist, defaultTime = defaultRocket.moveToPlanet(destination) # on voit le deplacement par default et on le compare 
+    return jsonify({
+                    "steps": returnSteps, 
+                    "defaultFly": {"defaultTime: ": defaultTime, "defaultFuelConsumption :": defaultRocket.gas}
+                    })
 
 @app.route("/planets")
 def list_planets():
     """ returns data of planets """ 
     return jsonify(getPlanetsPositions())
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8000)

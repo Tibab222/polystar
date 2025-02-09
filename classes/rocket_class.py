@@ -40,7 +40,7 @@ class Rocket:
         self.steps.append(newStep)
         return distance, time
     
-    def moveToPlanet(self, planet: Planet):
+    def moveToPlanet(self, planet: str):
         """Déplace la fusée à la position de la planète"""
         x, y = planet.position_at_time(0)
         distance, time = self.moveToPosition(x, y, self.speed, planet.name)
