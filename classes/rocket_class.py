@@ -74,7 +74,7 @@ class Rocket:
         d_planet = planet.distanceFromSun - math.sqrt(self.position[0]**2 + self.position[1]**2)
 
         if self.acceleration == 0:
-            t_arrival = d_planet / self.speed[0]
+            t_arrival = d_planet / self.speed
         else:
             t_arrival = (-self.speed + math.sqrt(self.speed**2 + 2 * self.acceleration * d_planet)) / self.acceleration
 
