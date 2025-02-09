@@ -1,45 +1,55 @@
+import datetime
 import heapq
 import numpy as np
 from solarySystem import *
 
-def slingshot_velocity(v_in, planet: Planet):
-    """ Calcule la vitesse après un slingshot gravitationnel """
-    v_planet = planet.averageSpeed
-    M = planet.mass
-    r = planet.distanceFromSun
+def distance(planetA, planetB):
+    posA = np.array([planetA["x"], planetA["y"], planetA["z"]])
+    posB = np.array([planetB["x"], planetB["y"], planetB["z"]])
+    return np.linalg.norm(posA - posB)
 
-    delta_v = np.sqrt(v_in**2 + 2 * G * M / r)  
-    return delta_v + v_planet  # Ajoute la vitesse de la planète elle-même
+def cost_function(planetA, planetB):
+    """Here we set the cost depending on distance and gravity"""
+    d = distance(planetA, planetB)
+    gravity_effect = (planetA["gravity"] + planetB["gravity"]) / 2  
+    return d * (1 / gravity_effect)
 
-def calculatePath(departure, destination, initialSpeed):
-    """ Trouve la meilleure trajectoire en minimisant la consommation de carburant """
-    departurePlanet = buildPlanet(departure)
-    destinationPlanet = buildPlanet(destination)
-    planets = buildPlanets()
+def heuristic(planetA, planetB):
+    return distance(planetA, planetB) / 1e9
 
-    queue = []
-    heapq.heappush(queue, (0, departurePlanet.name, initialSpeed, [departurePlanet.name]))  # (cost, current_planet_name, speed, path)
-    
-    visited = {}
+def findOptimalPath(start_planet, goal_planet):
+    planets = getPlanetsPositions()
 
-    while queue:
-        cost, current_name, speed, path = heapq.heappop(queue)
+    if start_planet not in planets or goal_planet not in planets:
+        return {"error": "Planète non trouvée"}
 
-        if current_name == destinationPlanet.name:
-            return {"best_route": path, "fuel_efficiency": cost}
+    start_pos = planets[start_planet]
+    goal_pos = planets[goal_planet]
 
-        if current_name in visited and visited[current_name] <= cost:
-            continue 
+    open_set = []
+    heapq.heappush(open_set, (0, start_planet, [start_planet], 0))  
 
-        visited[current_name] = cost
+    g_score = {planet: float('inf') for planet in planets}
+    g_score[start_planet] = 0
 
-        for nextPlanet in planets:
-            if nextPlanet.name in path:  # Évite les boucles
+    while open_set:
+        _, current_planet, path, cost = heapq.heappop(open_set)
+
+        if current_planet == goal_planet:
+            return {"best_route": path, "total_cost": cost}
+
+        for neighbor in planets:
+            if neighbor == current_planet:
                 continue
+            
+            neighbor_pos = planets[neighbor]
+            move_cost = cost_function(planets[current_planet], neighbor_pos)
 
-            new_speed = slingshot_velocity(speed, nextPlanet)
-            new_cost = cost + (100 / new_speed)  # Facteur pour augmenter l'impact du coût
+            tentative_g_score = g_score[current_planet] + move_cost
 
-            heapq.heappush(queue, (new_cost, nextPlanet.name, new_speed, path + [nextPlanet.name]))
+            if tentative_g_score < g_score[neighbor]:
+                g_score[neighbor] = tentative_g_score
+                f_score = tentative_g_score + heuristic(neighbor_pos, goal_pos)
+                heapq.heappush(open_set, (f_score, neighbor, path + [neighbor], tentative_g_score))
 
-    return {"error": "Aucune trajectoire trouvée"}
+    return {"error": "Aucun chemin trouvé"}

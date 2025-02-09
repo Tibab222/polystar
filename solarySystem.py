@@ -1,7 +1,8 @@
+import datetime
 import json
 from calculations import *
 from classes.planet_class import *
-G = 6.67430e-11 
+from astroquery.jplhorizons import Horizons
 
 def getPlanetData():
     """ Récupère et trie les planètes par distance au Soleil """
@@ -39,3 +40,39 @@ def buildPlanet(planetName):
     planets = getPlanetData()
     p = planets[planetName]
     return Planet(p['name'], p['radius'], p['mass'], p['distance_from_sun'], p['gravity'], p['orbitalPeriod'])
+
+def getPlanetIds():
+    """Renvoie un dictionnaire contenant les ID des planètes et leurs noms"""
+    return {
+        "Earth": "399", 
+        "Moon": "301",
+        "Mars": "499",
+        "Jupiter": "599",
+        "Venus": "299",
+        "Mercury": "199",
+        "Neptune": "899",
+        "Saturn": "699",
+        "Uranus": "799"
+    }
+
+def getPlanetPosition(planet_name, date_time):
+    """Récupère la position héliocentrique (x, y, z) d'une planète à une date donnée"""
+    planet_ids = getPlanetIds()
+    planet_id = planet_ids[planet_name]  
+    planet_data = getPlanetData()
+    jd_now = date_time.timestamp() / 86400 + 2440587.5 
+    obj = Horizons(id=planet_id, location='500@0', epochs=[jd_now], id_type='majorbody')
+    eph = obj.vectors()
+
+    x = eph['x'][0] * 1.496e+11  
+    y = eph['y'][0] * 1.496e+11
+    z = eph['z'][0] * 1.496e+11  
+
+    return {"x": x, "y": y, "z": z, "gravity": planet_data[planet_name]["gravity"]} 
+
+def getPlanetsPositions():
+    """Renvoie les positions de toutes les planètes du système solaire"""
+    date_time = datetime.datetime.now(datetime.timezone.utc)
+    planets = getPlanetData()
+    positions = {name: getPlanetPosition(name, date_time) for name in planets}
+    return positions

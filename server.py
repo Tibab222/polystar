@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 from solarySystem import *
 from trajectory import *
+from classes.planet_class import *
 
 app = Flask(__name__)
 
@@ -14,14 +15,12 @@ def home():
 
 @app.route('/calcul')
 def calcul_trajectoire():
-    return jsonify({"result": "Simulation de trajectoire en cours"})
+    return findOptimalPath("Venus", "Mars")
 
 @app.route("/planets")
 def list_planets():
-    """ returns data of planets """
-    trajectory = calculatePath("Mercury", "Earth", 7000)
-    #return getPlanetData()
-    return trajectory
+    """ returns data of planets """ 
+    return jsonify(getPlanetsPositions())
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8000)
