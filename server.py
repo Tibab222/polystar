@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from classes.best_path_class import BestPathClass
 from solarySystem import *
 from trajectory import *
@@ -23,17 +23,18 @@ def list_planets():
     #return getPlanetData()
     return trajectory
 
-@app.route("/path")
-def bestPath():
-    bestPath = BestPathClass(buildPlanets(), "Earth", "Mars")
+@app.route("/path/<origin>/<destination>")
+def bestPath(origin, destination):
+    """ returns the best path """
+    bestPath = BestPathClass(buildPlanets(), origin, destination)
     bestPath.createRockets()
-    bestPath.findBestPath()
+    bestOne = bestPath.findBestPath()
     # make a json with the name of planet and the angle
-    planetsNameAndAngle = []
-    for planet in bestPath.planets:
-        planetsNameAndAngle.append({"name": planet.name, "angle": planet.initial_angle*180/math.pi})
-    #return getPlanetData()
-    return {"message": planetsNameAndAngle}
+    bestRocket: Rocket = bestOne['bestTimeRocket']
+    bestTimePath = []
+    for path in bestRocket.steps:
+        bestTimePath.append({"targetX": path[0], "targetY": path[1], "time": path[2]})
+    return jsonify({"path": bestTimePath})
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8000)

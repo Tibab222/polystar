@@ -25,7 +25,6 @@ class RocketLauncher:
 
 
     def find_best_path(self):
-        bestPath = None
         self.runAllRockets()
         # print the rockets steps
         bestTime = 999999999999999999999999
@@ -50,6 +49,14 @@ class RocketLauncher:
                 lowestGasExpense = rocket.gas
                 lowestGasExpenseRocket = rocket
                 lowestGasExpensePath = path
-        print(f"Le meilleur temps est de {bestTime} secondes avec {bestTimeRocket.name} avec le path {bestTimePath}")
-        print(f"La plus petite distance parcourue est de {bestDistance} mètres avec {bestDistanceRocket.name} avec le path {bestDistancePath}")
-        print(f"La plus petite dépense de carburant est de {lowestGasExpense} % avec {lowestGasExpenseRocket.name} avec le path {lowestGasExpensePath}")
+        return {
+            'bestTime': bestTime,
+            'bestTimeRocket': bestTimeRocket,
+            'bestTimePath': bestTimePath,
+            'bestDistance': bestDistance,
+            'bestDistanceRocket': bestDistanceRocket,
+            'bestDistancePath': bestDistancePath,
+            'lowestGasExpense': lowestGasExpense,
+            'lowestGasExpenseRocket': lowestGasExpenseRocket,
+            'lowestGasExpensePath': lowestGasExpensePath
+        }
