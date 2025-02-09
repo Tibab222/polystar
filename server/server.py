@@ -7,7 +7,7 @@ from classes.planet_class import *
 import math
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True)
 
 @app.route('/')
 def home():
