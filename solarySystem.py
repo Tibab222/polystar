@@ -1,7 +1,7 @@
 import datetime
 import json
 from calculations import *
-from classes.planet_class import *
+from classes.planet_class import Planet
 from astroquery.jplhorizons import Horizons
 
 def getPlanetData():
@@ -30,10 +30,17 @@ def buildPlanets():
             data["mass"], 
             data["distance_from_sun"], 
             data["gravity"], 
-            data["orbitalPeriod"])
+            data["orbitalPeriod"],
+            getPlanetAngle(name))
         for name, data in planets.items()
     ]
     return planetsObjects
+
+def getPlanetAngle(planetName):
+    """ Récupère l'angle initial de la planète par rapport à l'axe x """
+    pos = getPlanetPosition(planetName, datetime.datetime.now(datetime.timezone.utc))
+    angleXYZ = math.atan2(pos["z"], math.sqrt(pos["x"]**2 + pos["y"]**2))
+    return angleXYZ
 
 def buildPlanet(planetName):
     """ Construit un objet Planet à partir du nom de la planète """

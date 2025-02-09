@@ -13,7 +13,6 @@ class Rocket:
         self.position = departure_planet.position_at_time(0) # position actuelle (x, y)
         self.last_planet = departure_planet
         self.steps = [] # historique des positions
-        self.steps.append(self.position)
         self.gas = 100 # carburant en %
         self.acceleration = 0
         self.direction = 0 # angle de la direction de la fusée
@@ -21,7 +20,7 @@ class Rocket:
     def __str__(self):
         return f"{self.name} vole à {self.speed} m/s"
     
-    def moveToPosition(self, x, y, speed):
+    def moveToPosition(self, x, y, speed, planetName):
         """"
         Déplace la fusée à la position (x, y) à la vitesse speed.
         Change la position de la fusée et met à jour les attributs
@@ -36,13 +35,14 @@ class Rocket:
         self.speed = speed
         self.position = (x, y)
         self.direction = math.atan2(y - self.position[1], x - self.position[0])
-        self.steps.append(self.position)
+        newStep = (self.position[0], self.position[1], planetName)
+        self.steps.append(newStep)
         return distance, time
     
     def moveToPlanet(self, planet: Planet):
         """Déplace la fusée à la position de la planète"""
         x, y = planet.position_at_time(0)
-        distance, time = self.moveToPosition(x, y, self.speed)
+        distance, time = self.moveToPosition(x, y, self.speed, planet.name)
         new_speed = self.calculateFlyby(planet)
         self.speed = new_speed
         return distance, time
@@ -71,7 +71,7 @@ class Rocket:
         d_planet = planet.distanceFromSun - math.sqrt(self.position[0]**2 + self.position[1]**2)
 
         if self.acceleration == 0:
-            t_arrival = d_planet / self.speed
+            t_arrival = d_planet / self.speed[0]
         else:
             t_arrival = (-self.speed + math.sqrt(self.speed**2 + 2 * self.acceleration * d_planet)) / self.acceleration
 

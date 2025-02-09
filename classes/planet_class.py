@@ -14,7 +14,7 @@ class Planet:
         self.initial_angle = initial_angle
         self.averageSpeed = average_planet_speed(distanceFromSun, orbitalPeriod)
         self.position = np.array([0, 0, 0])
-    
+
     def __str__(self):
         return f"{self.name} est une planète de masse {self.mass} kg et de rayon {self.radius} mètres, située à {self.distanceFromSun} km du Soleil."
     
@@ -25,7 +25,7 @@ class Planet:
         y = self.distanceFromSun * math.sin(angle)
         return x, y
     
-    def update_position(self, date_time):
-        """Met à jour la position de la planète en fonction de l'instant donné"""
-        self.position = get_planet_position(self.name, date_time)
+    # def update_position(self, date_time):
+    #     """Met à jour la position de la planète en fonction de l'instant donné"""
+    #     self.position = get_planet_position(self.name, date_time)
     
