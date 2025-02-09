@@ -33,7 +33,8 @@ def bestPath(origin, destination):
     bestRocket: Rocket = bestOne['bestTimeRocket']
     bestTimePath = []
     for path in bestRocket.steps:
-        bestTimePath.append({"targetX": path[0], "targetY": path[1], "time": path[2]})
+        angle = math.atan2(path[1],path[0])
+        bestTimePath.append({"planet": path[3], "angle": angle, "time": path[2]})
     return jsonify({"path": bestTimePath})
 
 if __name__ == '__main__':

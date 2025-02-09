@@ -11,7 +11,7 @@ class Rocket:
         self.distance = 0 # distance parcourue
         self.time = 0 # temps de vol effectué en secondes
         pos = departure_planet.position_at_time(0)
-        self.position = (pos[0], pos[1], 0) # position actuelle (x, y)
+        self.position = (pos[0], pos[1], 0, departure_planet.name) # position actuelle (x, y)
         self.last_planet = departure_planet
         self.steps = [] # historique des positions
         self.steps.append(self.position)
@@ -41,7 +41,7 @@ class Rocket:
         self.distance += distance
         self.time += time
         self.speed = speed
-        self.position = (x, y, time)
+        self.position = (x, y, self.time, self.last_planet.name)
         self.direction = math.atan2(y - self.position[1], x - self.position[0])
         self.steps.append(self.position)
         self.gas -= 10/(1+speedNorme)
@@ -53,6 +53,7 @@ class Rocket:
         distance, time = self.moveToPosition(x, y, self.speed)
         new_speed = self.calculateFlyby(planet)
         self.speed = new_speed
+        self.last_planet = planet
         return distance, time
     
     def calculateFlyby(self, planet: Planet):
