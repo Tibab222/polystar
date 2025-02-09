@@ -45,7 +45,9 @@ class Rocket:
         x, y = planet.position_at_time(0)
         distance, time = self.moveToPosition(x, y, self.speed, planet.name)
         new_speed = self.calculateFlyby(planet)
+        fuelConsumption = distance/10000 # -1% pour chaque 10km
         self.speed = new_speed
+        self.gas -= fuelConsumption/new_speed # plus la vitesse est grande moins de gas consomé
         return distance, time
     
     def calculateFlyby(self, planet: Planet):
