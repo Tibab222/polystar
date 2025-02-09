@@ -42,7 +42,7 @@ class Rocket:
     
     def moveToPlanet(self, planet: Planet):
         """Déplace la fusée à la position de la planète"""
-        x, y = planet.position_at_time(self.time_to_orbit(planet))
+        x, y = planet.position_at_time(0)
         distance, time = self.moveToPosition(x, y, self.speed, planet.name)
         new_speed = self.calculateFlyby(planet)
         fuelConsumption = distance/10000 # -1% pour chaque 10km
