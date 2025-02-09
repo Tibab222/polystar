@@ -7,15 +7,11 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    solarySystem = buildPlanets()
-    for planet in solarySystem:
-        print(planet)
-        print(planet.position_at_time(20))
     return jsonify({"message": "Bienvenue sur mon serveur Flask !"})
 
 @app.route('/calcul')
 def calcul_trajectoire():
-    return findOptimalPath("Venus", "Mars")
+    return findOptimalPath("Mercury", "Venus")
 
 @app.route("/planets")
 def list_planets():

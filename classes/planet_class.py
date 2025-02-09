@@ -25,7 +25,3 @@ class Planet:
         y = self.distanceFromSun * math.sin(angle)
         return x, y
     
-    def update_position(self, date_time):
-        """Met à jour la position de la planète en fonction de l'instant donné"""
-        self.position = get_planet_position(self.name, date_time)
-    

@@ -1,4 +1,3 @@
-import datetime
 import heapq
 import numpy as np
 from solarySystem import *
@@ -23,7 +22,6 @@ def findOptimalPath(start_planet, goal_planet):
     if start_planet not in planets or goal_planet not in planets:
         return {"error": "Planète non trouvée"}
 
-    start_pos = planets[start_planet]
     goal_pos = planets[goal_planet]
 
     open_set = []
