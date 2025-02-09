@@ -17,6 +17,7 @@ class Rocket:
         self.gas = 100 # carburant en %
         self.acceleration = 0
         self.direction = 0 # angle de la direction de la fusée
+        # print('Rocket created at', self.position)
     
     def __str__(self):
         return f"{self.name} vole à {self.speed} m/s"
@@ -29,7 +30,12 @@ class Rocket:
         # Calcul de la distance à parcourir
         distance = math.sqrt((x - self.position[0])**2 + (y - self.position[1])**2)
         # Calcul du temps de vol
-        time = distance / speed
+        # normalise the speed vector
+        speedNorme = np.linalg.norm(speed)
+        if speedNorme == 0:
+            time = 0
+        else:
+            time = distance / speedNorme
         # Mise à jour des attributs
         self.distance += distance
         self.time += time
@@ -37,11 +43,12 @@ class Rocket:
         self.position = (x, y)
         self.direction = math.atan2(y - self.position[1], x - self.position[0])
         self.steps.append(self.position)
+        self.gas -= 10/(1+speedNorme)
         return distance, time
     
     def moveToPlanet(self, planet: Planet):
         """Déplace la fusée à la position de la planète"""
-        x, y = planet.position_at_time(0)
+        x, y = planet.position_at_time(self.time_to_orbit(planet))
         distance, time = self.moveToPosition(x, y, self.speed)
         new_speed = self.calculateFlyby(planet)
         self.speed = new_speed
@@ -71,7 +78,10 @@ class Rocket:
         d_planet = planet.distanceFromSun - math.sqrt(self.position[0]**2 + self.position[1]**2)
 
         if self.acceleration == 0:
-            t_arrival = d_planet / self.speed
+            # speedNorme is the norm of the speed vector
+            speedNorme = np.linalg.norm(self.speed)
+            speedNotZero = speedNorme if speedNorme != 0 else 1
+            t_arrival = d_planet / speedNotZero
         else:
             t_arrival = (-self.speed + math.sqrt(self.speed**2 + 2 * self.acceleration * d_planet)) / self.acceleration
 
@@ -87,3 +97,8 @@ class Rocket:
         """Retourne la position (x, y) de la fusée à l'arrivée à la planète"""
         t_arrival = self.time_to_orbit(planet)
         return self.position_at_time(t_arrival)
+    
+    def distanceFrom(self, planet: Planet):
+        """Retourne la distance entre la fusée et une planète"""
+        x, y = self.position_at_planet(planet)
+        return math.sqrt(x**2 + y**2)

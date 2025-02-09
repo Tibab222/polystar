@@ -1,5 +1,6 @@
 import heapq
 import numpy as np
+from classes.rocket_class import Rocket
 from solarySystem import *
 
 def slingshot_velocity(v_in, planet: Planet):
@@ -16,6 +17,10 @@ def calculatePath(departure, destination, initialSpeed):
     departurePlanet = buildPlanet(departure)
     destinationPlanet = buildPlanet(destination)
     planets = buildPlanets()
+    rocket = Rocket("Voyager", initialSpeed, departurePlanet)
+    planets.sort(key=lambda x: rocket.distanceFrom(x))
+    # for planet in planets:
+    #     print(planet.name, rocket.distanceFrom(planet), planet.initial_angle)
 
     queue = []
     heapq.heappush(queue, (0, departurePlanet.name, initialSpeed, [departurePlanet.name]))  # (cost, current_planet_name, speed, path)

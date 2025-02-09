@@ -1,4 +1,5 @@
 from flask import Flask, jsonify
+from classes.best_path_class import BestPathClass
 from solarySystem import *
 from trajectory import *
 
@@ -8,7 +9,6 @@ app = Flask(__name__)
 def home():
     solarySystem = buildPlanets()
     for planet in solarySystem:
-        print(planet)
         print(planet.position_at_time(20))
     return jsonify({"message": "Bienvenue sur mon serveur Flask !"})
 
@@ -19,9 +19,21 @@ def calcul_trajectoire():
 @app.route("/planets")
 def list_planets():
     """ returns data of planets """
-    trajectory = calculatePath("Mercury", "Earth", 7000)
+    trajectory = calculatePath("Mercury", "Neptune", 7000)
     #return getPlanetData()
     return trajectory
+
+@app.route("/path")
+def bestPath():
+    bestPath = BestPathClass(buildPlanets(), "Earth", "Mars")
+    bestPath.createRockets()
+    bestPath.findBestPath()
+    # make a json with the name of planet and the angle
+    planetsNameAndAngle = []
+    for planet in bestPath.planets:
+        planetsNameAndAngle.append({"name": planet.name, "angle": planet.initial_angle*180/math.pi})
+    #return getPlanetData()
+    return {"message": planetsNameAndAngle}
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8000)

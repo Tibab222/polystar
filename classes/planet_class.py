@@ -1,8 +1,9 @@
+import random
 from calculations import average_planet_speed
 import math
 
 class Planet:
-    def __init__(self, name, radius, mass, distanceFromSun, gravity, orbitalPeriod, initial_angle=0):
+    def __init__(self, name, radius, mass, distanceFromSun, gravity, orbitalPeriod):
         self.name = name
         self.radius = radius
         self.mass = mass
@@ -10,7 +11,7 @@ class Planet:
         self.gravity = gravity
         self.orbitalPeriod = orbitalPeriod
         self.angular_velocity = (2 * math.pi) / orbitalPeriod
-        self.initial_angle = initial_angle
+        self.initial_angle = random.uniform(0, 2*math.pi)
         self.averageSpeed = average_planet_speed(distanceFromSun, orbitalPeriod)
     
     def __str__(self):
