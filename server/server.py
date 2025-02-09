@@ -2,10 +2,12 @@ from flask import Flask, jsonify
 from classes.rocket_class import Rocket
 from solarySystem import *
 from trajectory import *
+from flask_cors import CORS
 from classes.planet_class import *
 import math
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/')
 def home():

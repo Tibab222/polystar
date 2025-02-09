@@ -1,0 +1,44 @@
+<div class="container">
+  <h1>🌌 Comparaison des Trajectoires 🚀</h1>
+
+  <div class="inputs">
+    <label>🌍 Planète de départ :</label>
+    <select [(ngModel)]="origin">
+      <option *ngFor="let planet of planets" [value]="planet">{{ planet }}</option>
+    </select>
+
+    <label>🪐 Planète d'arrivée :</label>
+    <select [(ngModel)]="destination">
+      <option *ngFor="let planet of planets" [value]="planet">{{ planet }}</option>
+    </select>
+
+    <button (click)="fetchTrajectory()" [disabled]="loading">✨ Calculer</button>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <div class="loader"></div>
+    <p>Calcul en cours...</p>
+  </div>
+
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div *ngIf="data" class="result">
+    <h2>🛸 Résultats 🔥</h2>
+
+    <div class="default-data">
+      <h3>❌ Avant Optimisation</h3>
+      <p><b>Carburant :</b> {{ data.defaultFuelConsumption  }}%</p>
+      <p><b>Temps :</b> {{ (data.defaultTime / 86400) }} jours</p>
+    </div>
+
+    <div class="optimized-data">
+      <h3>✅ Après Optimisation</h3>
+      <ul>
+        <li *ngFor="let step of stepsToShow">
+          <b>{{ step.planet }}</b> - ⏳ {{ (step.time / 86400) }} jours 
+          | 🔥 Fuel: {{ step.fuel }}%
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
