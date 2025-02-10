@@ -19,13 +19,8 @@ class Planet:
         return f"{self.name} est une planète de masse {self.mass} kg et de rayon {self.radius} mètres, située à {self.distanceFromSun} km du Soleil."
     
     def position_at_time(self, time):
-        """Retourne la position (x, y) de la planète à un instant donné"""
+        """Return position (x, y) of a planrt at a certain given time"""
         angle = self.initial_angle + self.angular_velocity * time
         x = self.distanceFromSun * math.cos(angle)
         y = self.distanceFromSun * math.sin(angle)
         return x, y
-    
-    # def update_position(self, date_time):
-    #     """Met à jour la position de la planète en fonction de l'instant donné"""
-    #     self.position = get_planet_position(self.name, date_time)
-    

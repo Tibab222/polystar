@@ -57,6 +57,6 @@ export class TrajectoryComponent {
       } else {
         clearInterval(interval);
       }
-    }, 1000); // 🔥 Ajoute une étape toutes les 1 seconde
+    }, 1000);
   }
 }
