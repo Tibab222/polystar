@@ -70,7 +70,7 @@ def findOptimalPath(start_planet, goal_planet):
 
         # If we reached the goal, return the computed best route and cost
         if current_planet == goal_planet:
-            return {"bMeilleure route": path, "Cout total": cost}
+            return {"best_route": path, "Cout total": cost}
 
         for neighbor in planets:
             if neighbor == current_planet:

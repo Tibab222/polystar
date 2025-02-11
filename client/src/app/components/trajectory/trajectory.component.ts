@@ -46,6 +46,10 @@ export class TrajectoryComponent {
     this.error = '';
     this.data = null;
     this.trajectoryService.getTrajectory(this.origin, this.destination);
+
+    setTimeout(() => {
+      document.querySelector('.result')?.scrollIntoView({ behavior: 'smooth' });
+    }, 500);
   }
 
   animateSteps() {

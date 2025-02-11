@@ -1,21 +1,22 @@
 .container {
   text-align: center;
   font-family: 'Orbitron', sans-serif;
-  background: url('/client/src/backgound.gif'),
+  background: url('../../../assets/background2.gif'),
               linear-gradient(#0a1a44, #122d6a, #1c3f8e);
   color: white;
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
   display: flex;
   align-items: center;
   flex-direction: column;
-  height: 100vh;  
+  height: 98vh;
+  overflow: hidden;
 }
 
 .inputs {
   display: flex;
   flex-direction: column;
-  gap: 15px; 
+  gap: 15px;
   margin-bottom: 20px;
+  margin-top: 8px;
 }
 
 select {
@@ -54,24 +55,60 @@ button:hover {
   transform: scale(1.05);
 }
 
-/* 🌀 Loader animé */
 .loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   margin-top: 20px;
 }
 
-.loader {
-  border: 6px solid rgba(255, 255, 255, 0.3);
-  border-top: 6px solid #00bfff;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
+.loading p {
+  font-size: 20px;
 }
 
-@keyframes spin {
+.planet-loader {
+  width: 80px;
+  height: 80px;
+  animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+.slide-down {
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: slideIn 1s ease-in-out forwards;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 1s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.result-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.optimized-data {
+  justify-content: center;
+  margin-left: 100px;
+}
+
+.step-item {
+  animation: fadeIn 1s ease-in-out forwards;
+  margin-top: 10px;
+  padding: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }

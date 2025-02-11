@@ -20,27 +20,31 @@
   </div>
 
   <div *ngIf="loading" class="loading">
-    <div class="loader"></div>
+    <p>Chargement ... </p>
+    <img src="assets/planet.png" class="planet-loader">
   </div>
 
   <div *ngIf="error" class="error">{{ error }}</div>
 
-  <div *ngIf="data" class="result">
+  <div *ngIf="data" class="result slide-down">
     <h2>🛸 Résultats 🔥</h2>
-    <div class="default-data">
-      <h3>❌ Avant Optimisation</h3>
-      <p><b>Carburant :</b> {{ data.defaultFuelConsumption | number:'1.2-2' }}%</p>
-      <p><b>Temps :</b> {{ (data.defaultTime / 86400) | number:'1.2-2' }} jours</p>
-    </div>
 
-    <div class="optimized-data">
-      <h3>✅ Après Optimisation</h3>
-      <ul>
-        <li *ngFor="let step of stepsToShow">
-          <b>{{ step.planet }}</b> - ⏳ {{ (step.time / 86400) | number:'1.2-2' }} jours 
-          | 🔥 Fuel: {{ step.fuel | number:'1.2-2' }}%
-        </li>
-      </ul>
+    <div class="result-container">
+      <div class="default-data fade-in">
+        <h3>❌ Avant Optimisation</h3>
+        <p><b>Carburant :</b> {{ data.defaultFuelConsumption | number:'1.2-2' }}%</p>
+        <p><b>Temps :</b> {{ (data.defaultTime / 86400) | number:'1.2-2' }} jours</p>
+      </div>
+
+      <div class="optimized-data fade-in">
+        <h3>✅ Après Optimisation</h3>
+        <ul>
+          <li *ngFor="let step of stepsToShow" class="step-item">
+            <b>{{ step.planet }}</b> - ⏳ {{ (step.time / 86400) | number:'1.2-2' }} jours 
+            | 🔥 Fuel: {{ step.fuel | number:'1.2-2' }}%
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </div>

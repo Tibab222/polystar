@@ -3,5 +3,4 @@ import { TrajectoryComponent } from './components/trajectory/trajectory.componen
 
 export const routes: Routes = [
   { path: '', component: TrajectoryComponent }, 
-  { path: '**', redirectTo: '' }  
 ];
